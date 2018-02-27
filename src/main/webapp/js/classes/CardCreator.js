@@ -13,6 +13,7 @@ function CardCreator(cardId, data, tabsId, cardFiledValues, messages) {
     this.mandatoryCondtitions = {};
     this.typeForSaving = "typeForSaving";
     this.mode = this.getSearchParams("mode");
+    this.filesUploaderCount = 0;
     return this;
 }
 

@@ -4,7 +4,7 @@ function FormElements() {
     this.name = "name";
     this.typeForSaving = "typeForSaving";
     this.type = "type";
-
+    this.filesUploaderCount = 0;
     return this;
 }
 
@@ -159,6 +159,7 @@ FormElements.prototype.image = function (data, parentElementId, elementValue) {
 
 
 FormElements.prototype.file = function (data, parentElementId, elementValue, addNew) {
+
     var scope = this;
     var data = data;
     var parentElementId = parentElementId;
@@ -172,19 +173,18 @@ FormElements.prototype.file = function (data, parentElementId, elementValue, add
                 .append($('<label>', {value: data[this.title]}).html(this.messages[data[this.title]]))
                 .append($('<input>', {
                     class: "input-ghost",
-                    id: this.name,
+                    id: this.name+"_"+scope.filesUploaderCount,
                     customType: data[this.typeForSaving] ? data[this.typeForSaving] : "",
                     type: "file",
                     fileValue: "",
                     name: data[this.name],
                     style: "visibility:hidden; height:0"
-                }).change(function () {
+                }).on('change', function () {
                     $(this).next($(this)).find('input.form-control').val(($(this).val()).split('\\').pop());
                     var reader = new FileReader();
                     reader.readAsDataURL(this.files[0]);
                     reader.idFileelement = this.id;
                     var readerVar = (this, function (e, data) {
-                        // $("#"+this.idFileelement).attr('fileValue', reader.result);
                         $("#" + this.idFileelement)[0].fileValue = reader.result;
                     });
                     reader.onload = readerVar;
@@ -193,7 +193,7 @@ FormElements.prototype.file = function (data, parentElementId, elementValue, add
                 .append($('<div>', {class: "input-group input-file"})
                     .append($('<span>', {class: "input-group-btn"})
                         .append($('<button>', {class: "btn btn-default btn-choose", type: 'button'}).click(function () {
-                            $('.input-ghost').click();
+                            $(this).parents(".textField").find('.input-ghost').click();
                         }).html(this.messages["choose"])))
                     .append($('<input>', {
                         class: "form-control",
@@ -226,6 +226,61 @@ FormElements.prototype.file = function (data, parentElementId, elementValue, add
                     .append($('<div>', {class: "fileSaver"})
                         .append($('<a>', {href: elementValue[0]["data"].replace(" ", "+").replace(/\s/g, '+')}).html(elementValue[0]["fileName"]))));
         }
+    }
+
+    scope.filesUploaderCount = scope.filesUploaderCount+1;
+
+}
+
+FormElements.prototype.file2 = function (data, parentElementId, elementValue, addNew) {
+
+         var scope = this;
+        var divElement = document.createElement('div');
+        $(divElement).attr({class: "textField" + " " + data[this.customClassName] + "  " + data[this.name]});
+
+        var span = document.createElement('span');
+         $(span).attr({class: "hidden popup", html: this.messages["mandatory"]});
+        divElement.appendChild(span);
+
+        var label = document.createElement('label');
+         $(label).attr({value: data[this.title], html: this.messages[data[this.title]]});
+         span.appendChild(label);
+
+
+          var input = document.createElement('input');
+         $(input).attr({ class: "input-ghost",
+             id: this.name+"_"+scope.filesUploaderCount,
+             customType: data[this.typeForSaving] ? data[this.typeForSaving] : "",
+             type: "file",
+             fileValue: "",
+             name: data[this.name],
+             style: "visibility:hidden; height:0"});
+         span.appendChild(input);
+
+    var div1 = document.createElement('label');
+    $(div1).attr({class: "input-group input-file"});
+    span.appendChild(label);
+
+        $('#' + parentElementId).append(divElement);
+
+        console.log("aaa");
+
+
+
+}
+
+FormElements.prototype.testFunc = function (data, parentElementId, elementValue, addNew, firstCreation) {
+    console.log("***");
+    if(!firstCreation){
+        $(this).next($(this)).find('input.form-control').val(($(this).val()).split('\\').pop());
+        var reader = new FileReader();
+        reader.readAsDataURL(this.files[0]);
+        reader.idFileelement = this.id;
+        var readerVar = (this, function (e, data) {
+            $("#" + this.idFileelement)[0].fileValue = reader.result;
+        });
+        reader.onload = readerVar;
+        this.file(data, parentElementId, elementValue, true);
     }
 
 }

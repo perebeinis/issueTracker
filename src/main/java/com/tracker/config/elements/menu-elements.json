@@ -10,7 +10,7 @@
         {
           "name": "searchUsers",
           "title": "header.buttons.searchUsers",
-          "searchColumns": "firstName,lastName,birthDay",
+          "searchColumns": "firstName,lastName,birthDay,email",
           "type": "subElement",
           "mode": "view",
           "searchParams": {
